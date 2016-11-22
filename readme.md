@@ -13,7 +13,6 @@ A lightweight markup language syntax and lexer/parser/tranlator inspired by John
 |                                | `<h5> ... </h5>`               | `#5 ...`                    |
 |                                | `<h6> … </h6>`                 | `#6 ...`                    |
 | Horizontal Rule                | `<hr>`                         | `***`                       |
-| ------------------------------ | ---------------------------    | ---------------------       |
 | *Italics*                      | `<i> ital </i>`                | `_ital_`                    |
 | **Bold**                       | `<b> bold </b>`                | `*bold*`                    |
 | <strike>Strikethrough</strike> | `<strike> strike </strike>`    | `-strike-`                  |
