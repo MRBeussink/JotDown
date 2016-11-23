@@ -1,8 +1,19 @@
-# To-do
+# Progress Report
+
+Mark Beussink & Cameron Niccum
+
+We are mostly on track.  We have most of the project left to implement but we have made almost all of the decisions.  Our *EBNF* could use some work, but it's solid for now.  As far as the division of labor is concerned, the first lever/parser we wrote was done via *pair programming*, which is the plan for this project.  In the todo list bellow, suggestions are made for who is responsible for considereing or knowing how to do what, but we intend to do it in Cameron's kitchen like we did for the assignment.
+
+[GitHub repo](https://github.com/MRBeussink/JotDown) 
+
+
+
+## To-do
 
 ### Drawing Board Ideas
 
 - [ ] Decide about tables.  What should the syntax be?
+- [x] Write EBNF
 
 ### Programming Tasks
 
@@ -37,4 +48,4 @@
 
 - [x] Write Proposal
 - [x] Write Progress Report
-- [ ] Submit Project to D2L 
+- [ ] Submit Project to D2L
