@@ -5,7 +5,7 @@ public class Main {
 	 public static void main(String[] args) throws IOException {
 		 
 		String template;
-		
+		StringBuilder output;
 		template = args[1];
 		String outputfile = null;
 		
@@ -14,17 +14,13 @@ public class Main {
 			outputfile = outputfile + template.charAt(i);
 			i++;
 		}
-		BufferedReader infile = new BufferedReader(new FileReader(args[1]));
-		PrintWriter outfile = new PrintWriter(new FileWriter(outputfile + ".html"));
+		FileReader infile = new FileReader(args[1]);
+		FileWriter outfile = new FileWriter(outputfile + ".html");
 		
-		 String line;
-		 
-		 while((line = infile.readLine()) != null){
-			 
-			 
-			 
-		 }
-		 
+		Parser prsr = new Parser(infile);
+		prsr.parse();
+		
+		outfile = prsr.getOutput();
 		 
 		 
 		 
