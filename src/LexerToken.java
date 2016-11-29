@@ -16,12 +16,23 @@ public enum LexerToken {
         * New Line
      */
 
-    Header,
+    Header {
+    	@Override public void setValue(String value) { this.value = value; }
+    	@Override public String getValue() { return this.value; }
+    },
     HrzRule,
     Ital, Bold, Strike, Code,
     UList, OList,
     CBlock, QBlock,
     LinkOpen, LinkClose,
     ImgOpen, ImgClose, Split,
-    NewLine
+    NewLine,
+    Text {
+    	@Override public void setValue(String value) { this.value = value; }
+    	@Override public String getValue() { return this.value; }
+    };
+    
+    protected String value;
+	public void setValue(String value) { }
+	public String getValue() { return null; }
 }
