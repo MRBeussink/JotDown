@@ -19,6 +19,11 @@ public class Main {
 		
 		Parser prsr = new Parser(infile);
 		prsr.parse();
+
+        LexerToken test = LexerToken.Header;
+         test.setValue("3");
+
+
 		
 		outfile = prsr.getOutput();
 		 
