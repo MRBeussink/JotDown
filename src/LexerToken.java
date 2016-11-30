@@ -35,4 +35,14 @@ public enum LexerToken {
     protected String value;
 	public void setValue(String value) { }
 	public String getValue() { return null; }
+
+    public static void main(String[] args){
+
+        LexerToken tkn = LexerToken.Header;
+        tkn.setValue("7");
+        System.out.println(tkn.getValue());     // Output: 7
+
+        tkn = LexerToken.HrzRule;
+        System.out.println(tkn.getValue());     // Output: null
+    }
 }
