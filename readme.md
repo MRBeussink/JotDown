@@ -37,9 +37,12 @@ A lightweight markup language syntax and lexer/parser/tranlator inspired by John
 <Paragraph> -> <Text> NL {<Paragraph>}
 <Emphasis> 	-> (<Code> | <Ital> | <Bold> | <Strike>) <Text> (<Code> | <Ital> | <Bold> | <Strike>)
 <Block>		-> (<CBlock> | <QBlock>) <Text>* (<CBlock> | <QBlock>) NL
-<List>		-> {Tab} (<OL> | <UL>) <Space> <Text> NL {<List>}
-<Text> 		-> Any set of characters with/without emphasis followed by NL
+<Code Block> -> <CBlock> <Text> <CBlock>
+<Block Quote>  -> <QBlock> {<Paragraph>} <QBlock>
+<List>		-> {Tab} (<OL> | <UL>) <Space> <ListItem> (<OL> | <UL>) <List>}
+<ListItem> -> <Text> : <Text> NL
+<Text> 		-> Any set of characters
 ```
 
-- [ ] Add EBNF for Links and Images (and tables?)
-- [ ] Fix EBNF for Blocks and Lists
+- [x] Add EBNF for Links and Images (and tables?)
+- [x] Fix EBNF for Blocks and Lists
