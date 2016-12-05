@@ -77,25 +77,59 @@ public enum ParserState {
 
     Header { },
 
-    Ital { },
+    Ital {
 
-    Bold { },
+        @Override public boolean allowsNesting() { return true; }
 
-    Strike { },
+        @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
+    },
 
-    Code { },
+    Bold {
 
-    QuoteBlock { },
+        @Override public boolean allowsNesting() { return true; }
 
-    CodeBlock { },
+        @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
+    },
+
+    Strike {
+
+        @Override public boolean allowsNesting() { return true; }
+
+        @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
+    },
+
+    Code {
+
+        @Override public boolean allowsEmphasis() { return false; }
+
+        @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
+    },
+
+    QuoteBlock {
+
+        @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
+    },
+
+    CodeBlock {
+
+        @Override public boolean allowsEmphasis() { return false; }
+
+        @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
+    },
 
     OrderedList { },
 
     UnorderedList { },
 
-    Link { },
+    Link {
 
-    Image { },
+        @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
+    },
+
+    Image {
+
+        @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
+    },
 
     Text {
 
@@ -164,6 +198,31 @@ public enum ParserState {
         }
 
         return null;
+    }
+
+    private LexerToken token;
+
+    public void setToken(LexerToken token) {
+        this.token = token;
+    }
+
+    public LexerToken getToken() {
+        return this.token;
+    }
+
+    public boolean allowsNesting() {
+        return false;
+    }
+
+    public boolean allowsEmphasis() {
+        return true;
+    }
+
+    public boolean isClosingState(ParserState state) {
+        if (state.equals(NewLine) || state.equals(End))
+            return true;
+
+        return false;
     }
 
     // public class FSMTransitionException extends Exception { }

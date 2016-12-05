@@ -71,7 +71,7 @@ public enum LexerToken {
     },
     EoF;
 
-    protected String value;
+    private String value;
 	public void setValue(String value) { }
 	public String getValue() { return null; }
 
