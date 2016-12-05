@@ -40,9 +40,12 @@ A lightweight markup language syntax and lexer/parser/tranlator inspired by John
 <Code Block> -> <CBlock> <Text> <CBlock>
 <Block Quote>  -> <QBlock> {<Paragraph>} <QBlock>
 <List>		-> {Tab} (<OL> | <UL>) <Space> <ListItem> (<OL> | <UL>) <List>}
-<ListItem> -> <Text> : <Text> NL
+<ListItem> -> <Text> NL
+<ImageLink> -> ( <Image> | <Link> )
+<Image> -> { <Text> : <Text> }
+<Link> -> [ <Text> : <Text> ]
 <Text> 		-> Any set of characters
 ```
 
-- [x] Add EBNF for Links and Images (and tables?)
+- [] Add EBNF for Links and Images (and tables?)
 - [x] Fix EBNF for Blocks and Lists
