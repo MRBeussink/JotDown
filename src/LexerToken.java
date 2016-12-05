@@ -30,7 +30,8 @@ public enum LexerToken {
     Text {
     	@Override public void setValue(String value) { this.value = value; }
     	@Override public String getValue() { return this.value; }
-    };
+    },
+    EoF;
     
     protected String value;
 	public void setValue(String value) { }

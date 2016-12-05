@@ -1,3 +1,6 @@
+import jdk.nashorn.internal.parser.*;
+import jdk.nashorn.internal.parser.Lexer;
+
 /**
  * Created by markbeussink on 11/29/16.
  */
@@ -5,244 +8,163 @@ public enum ParserState {
 
     Body {
 
-        public ParserState transition(LexerToken token){
-            switch (token) {
-                case Header:
-                    return Header;
+        @Override
+        protected ParserState transition(LexerToken token) {
 
-                case HrzRule:
-                    return ParserState.Reduce;
+            ParserState state = super.transition(token);
 
-                case Ital: case Bold: case Strike: case Code:
-                    return Emphasis;
+            if (state == null){
+                switch (token) {
 
-                case UList:case OList:
-                    return List;
+                    case HrzRule:
+                        state = HorizontalRule;
+                        break;
 
-                case CBlock:
-                    return CodeBlock;
+                    case Header:
+                        state = Header;
+                        break;
 
-                case QBlock:
-                    return QuoteBlock;
+                    case Ital:
+                        state = Ital;
+                        break;
 
-                case LinkOpen:
-                    return Link;
+                    case Bold:
+                        state =  Bold;
+                        break;
 
-                case ImgOpen:
-                    return Image;
+                    case Strike:
+                        state = Strike;
+                        break;
 
-                case Text:
-                    return Paragraph;
+                    case Code:
+                        state = Code;
+                        break;
 
-                default:
-                    break;
+                    case QBlock:
+                        state = QuoteBlock;
+                        break;
+
+                    case CBlock:
+                        state = CodeBlock;
+                        break;
+
+                    case OList:
+                        state = OrderedList;
+                        break;
+
+                    case UList:
+                        state = UnorderedList;
+                        break;
+
+                    case LinkOpen:
+                        state = Link;
+                        break;
+
+                    case ImgOpen:
+                        state = Image;
+                        break;
+
+                    default:
+                        break;
+                }
             }
-            return null;
+
+            return state;
         }
     },
 
-    Header {
+    HorizontalRule { },
 
-        public ParserState transition(LexerToken token){
-            switch (token) {
-                case Text:
-                    return Text;
+    Header { },
 
-                case NewLine:
-                    return Reduce;
+    Ital { },
 
-                default:
-                    break;
-            }
+    Bold { },
 
-            return null;
-        }
-    },
+    Strike { },
 
-    HorizontalRule {
+    Code { },
 
-        public ParserState transition(LexerToken token) {
-            switch (token) {
-                case NewLine:
-                    return Reduce;
-                default:
-                    break;
-            }
-            return null;
-        }
-    },
+    QuoteBlock { },
 
-    Paragraph {
+    CodeBlock { },
 
-        public ParserState transition(LexerToken token) {
-            switch (token) {
-                case Text:
-                    return Paragraph;
-                case NewLine:
-                    return Reduce;
-                default:
-                    break;
-            }
-            return null;
-        }
-    },
+    OrderedList { },
 
-    Emphasis {
+    UnorderedList { },
 
-        public ParserState transition(LexerToken token) {
-            switch (token) {
-                case Ital:
-                    return Ital;
-                case Bold:
-                    return Bold;
-                case Strike:
-                    return Strike;
-                case Code:
-                    return Code;
-                default:
-                    break;
-            }
-            return null;
-        }
-    },
+    Link { },
 
-    Ital {
-
-        public ParserState transition(LexerToken token) {
-            switch (token) {
-                case Ital:
-                    return Reduce;
-                case Text:
-                    return Text;
-                default:
-                    break;
-            }
-            return null;
-        }
-    },
-
-    Bold {
-
-        public ParserState transition(LexerToken token) {
-            switch(token) {
-                case Bold:
-                    return Reduce;
-                case Text:
-                    return Text;
-                default:
-                    break;
-            }
-            return null;
-        }
-    },
-
-    Strike {
-
-        public ParserState transition(LexerToken token) {
-            switch (token){
-                case Strike:
-                    return Reduce;
-                case Text:
-                    return Text;
-                default:
-                    break;
-            }
-            return null;
-        }
-    },
-
-    Code {
-
-        public ParserState transition(LexerToken token) {
-            switch (token) {
-                case Code:
-                    return Reduce;
-                case Text:
-                    return Text;
-                default:
-                    break;
-            }
-            return null;
-        }
-    },
-
-    QuoteBlock {
-
-        public ParserState transition(LexerToken token) {
-            switch (token) {
-                case Text:
-                    return Paragraph;
-                case QBlock:
-                    return Reduce;
-                default:
-                    break;
-            }
-            return null;
-        }
-    },
-
-    CodeBlock {
-
-        public ParserState transition(LexerToken token){
-            switch (token) {
-                case Text:
-                    return Text;
-                case CBlock:
-                    return Reduce;
-                default:
-                    break;
-            }
-            return null;
-        }
-    },
-
-    OrderedList {
-
-        public ParserState transition(LexerToken token) {
-            switch (token) {
-                case OList:
-                    return ListItem;
-                default:
-                    break;
-            }
-            return null;
-        }
-    },
-
-
-    UnOrderedList {
-
-        public ParserState transition(LexerToken token) {
-            switch (token) {
-                case UList:
-                    return ListItem;
-                default:
-                    break;
-            }
-            return null;
-        }
-    },
-
-    ListItem { },
-
-
-    Link {
-
-    },
-
-    Image {
-
-    },
+    Image { },
 
     Text {
 
+        @Override protected ParserState transition(LexerToken token) {
+
+            ParserState state = super.transition(token);
+
+            if (token == null) {
+                switch (token) {
+
+                    case Ital:
+                        return Ital;
+
+                    case Bold:
+                        return Bold;
+
+                    case Strike:
+                        return Strike;
+
+                    case Code:
+                        return Code;
+
+                    case QBlock:
+                        return QuoteBlock;
+
+                    case CBlock:
+                        return CodeBlock;
+
+                    case LinkClose:
+                        return Link;
+
+                    case ImgClose:
+                        return Image;
+
+                    case Split:
+                        return Text;
+
+                    default:
+                        break;
+                }
+            }
+
+            return state;
+        }
     },
 
-    Reduce {
+    NewLine {
 
-    };
+        @Override protected ParserState transition(LexerToken token) {
+            return Body.transition(token);
+        }
+    },
 
-    public abstract ParserState transition(LexerToken token);
+    End { };
+
+    protected ParserState transition(LexerToken token) {
+        switch (token) {
+            case Text:
+                return Text;
+            case NewLine:
+                return NewLine;
+            case EoF:
+                return End;
+            default:
+                break;
+        }
+
+        return null;
+    }
 
     // public class FSMTransitionException extends Exception { }
 }
