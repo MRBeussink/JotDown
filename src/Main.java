@@ -20,15 +20,13 @@ public class Main {
 		Parser prsr = new Parser(infile);
 		prsr.parse();
 
-        LexerToken test = LexerToken.Header;
-         test.setValue("3");
+		 System.out.println("Parsing file");
+		output = prsr.parse();
+		 
+		 // write output to file
 
-
-		
-		outfile = prsr.getOutput();
+		 outfile.write(output.toString());
 		 
-		 
-		 
-		 
+		 System.out.println("Yaata~");
 	 }
 }
