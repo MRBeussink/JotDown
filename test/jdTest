@@ -1,0 +1,41 @@
+
+`#1 This is the test document`
+
+#1 This is the test document
+
+`This is a horizontal line`
+
+***
+
+`And this is emphasis`
+
+_And *this* is -empfsis- emphasis_
+
+`These have been inline code`
+
+```
+This is a code block
+```
+
+`this is an ordered list`
+
+- first item
+- second item
+- don't forget the milk
+
+`this is an unordered list`
+
+* is this project done yet?
+* no
+
+`this is a link`
+
+[ Project's GitHub Repo : https://github.com/MRBeussink/JotDown ]
+
+`and here's a picture`
+
+{ All glory to the Hypnotoad : http://gph.is/28VDOzS }
+
+>>
+I hope you hate it.  - Reese Roper
+>>
