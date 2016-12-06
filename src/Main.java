@@ -16,17 +16,19 @@ public class Main {
 			 String outputfile = "";
 
 			 int i = 0;
-			 while (template.charAt(i) != '.') {
-				 outputfile = outputfile + template.charAt(i);
+			 while (filename.charAt(i) != '.') {
+				 outputfile = outputfile + filename.charAt(i);
 				 i++;
 			 }
-			 FileReader infile = new FileReader(filename);
+			 
+			 File read = new File(args[0]);
+			 FileReader infile = new FileReader(read);
 			 FileWriter outfile = new FileWriter(outputfile + ".html");
-
+			 System.out.println("Parsing file");
 			 Parser prsr = new Parser(infile);
 			 prsr.parse();
 
-			 System.out.println("Parsing file");
+			 
 			 output = prsr.parse();
 
 			 // write output to file
