@@ -12,6 +12,8 @@ public class Parser  {
     private Vector<ParserState> states;
     private DOMTree stateTree;
 
+    private int headerOrthoginality;
+
     public class DOMTree {
 
         private ParserState root;
@@ -96,6 +98,8 @@ public class Parser  {
 
         // translate
 
+        output = translate(stateTree.children);
+
 
         return output;
     }
@@ -104,6 +108,8 @@ public class Parser  {
 
         if (states.isEmpty()) { return; }
 
+        DOMNode node;
+
         if (states.firstElement().allowsNesting()) {
 
             // find match
@@ -111,18 +117,137 @@ public class Parser  {
 
             // if match found
             if (match != null) {
-                DOMNode node = new DOMNode(states.firstElement());  // create node
+                node = new DOMNode(states.firstElement());  // create node
                 states.removeElementAt(0);
 
-                node.nested = buildTreeUntilMatch();
+                node.nested = buildTreeUntilMatch(match);
             }
 
             // if match not found
             else {
                 LexerToken txt = LexerToken.Text;
                 txt.setValue(states.firstElement().getToken().getValue());
+
+                ParserState state = ParserState.Text;
+                state.setToken(txt);
+
+                states.removeElementAt(0);
+
+                node = new DOMNode(state);
+
+                node.next = buildTreeUntilNewLine();
             }
         }
+        else {
+            node = new DOMNode(states.firstElement());
+            states.removeElementAt(0);
+
+            node.next = buildTreeUntilNewLine();
+        }
+
+        stateTree.addChild(node);
+    }
+
+    private DOMNode buildTreeUntilMatch(ParserState key) {
+
+        DOMNode node;
+        if (states.firstElement() == key) {
+
+            node = new DOMNode(states.firstElement());
+            states.removeElementAt(0);
+        }
+
+        else {
+            if (states.isEmpty()) { node = null; }
+
+            if (states.firstElement().allowsNesting()) {
+
+                // find match
+                ParserState match = findMatch(states.firstElement());
+
+                // if match found
+                if (match != null) {
+                    node = new DOMNode(states.firstElement());  // create node
+                    states.removeElementAt(0);
+
+                    node.nested = buildTreeUntilMatch(match);
+                }
+
+                // if match not found
+                else {
+                    LexerToken txt = LexerToken.Text;
+                    txt.setValue(states.firstElement().getToken().getValue());
+
+                    ParserState state = ParserState.Text;
+                    state.setToken(txt);
+
+                    states.removeElementAt(0);
+
+                    node = new DOMNode(state);
+
+                    node.next = buildTreeUntilNewLine();
+                }
+            }
+            else {
+                node = new DOMNode(states.firstElement());
+                states.removeElementAt(0);
+
+                node.next = buildTreeUntilNewLine();
+            }
+        }
+
+        return node;
+    }
+
+    private DOMNode buildTreeUntilNewLine() {
+
+        DOMNode node;
+        if (states.firstElement().equals(ParserState.NewLine)) {
+
+            node = new DOMNode(states.firstElement());
+            states.removeElementAt(0);
+        }
+
+        else {
+            if (states.isEmpty()) { node = null; }
+
+            if (states.firstElement().allowsNesting()) {
+
+                // find match
+                ParserState match = findMatch(states.firstElement());
+
+                // if match found
+                if (match != null) {
+                    node = new DOMNode(states.firstElement());  // create node
+                    states.removeElementAt(0);
+
+                    node.nested = buildTreeUntilMatch(match);
+                }
+
+                // if match not found
+                else {
+                    LexerToken txt = LexerToken.Text;
+                    txt.setValue(states.firstElement().getToken().getValue());
+
+                    ParserState state = ParserState.Text;
+                    state.setToken(txt);
+
+                    states.removeElementAt(0);
+
+                    node = new DOMNode(state);
+
+                    node.next = buildTreeUntilNewLine();
+                }
+            }
+            else {
+                node = new DOMNode(states.firstElement());
+                states.removeElementAt(0);
+
+                node.next = buildTreeUntilNewLine();
+            }
+        }
+
+        return node;
     }
 
     private ParserState findMatch(ParserState key) {
@@ -134,6 +259,155 @@ public class Parser  {
         }
 
         return null;
+    }
+
+    private StringBuilder translate(Vector<DOMNode> nodes) {
+
+        StringBuilder output = new StringBuilder();
+        output.append("<body> \n");
+        for (DOMNode node : nodes) {
+
+            switch (node.value) {
+
+                case Ital:
+                case Bold:
+                case Strike:
+                case Code:
+                case Link:
+                case Image:
+                    output.append("<p>\n");
+                    break;
+
+                case OrderedList:
+                    output.append("<ol>");
+                default:
+                    break;
+
+            }
+            output.append(node.translateSubtree(node));
+
+            switch (node.value) {
+
+                case Ital:
+                case Bold:
+                case Strike:
+                case Code:
+                case Link:
+                case Image:
+                    output.append("</p>\n");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        output.append("</body> \n");
+        return output;
+    }
+
+    private StringBuilder translateSubtree(DOMNode node) {
+
+        StringBuilder output = new StringBuilder();
+
+        switch (node.value) {
+
+            case HorizontalRule:
+                output.append("<hr>");
+                break;
+
+            case Header:
+                String num = node.value.getToken().getValue();
+                output.append("<h" + num + "> ");
+                output.append(translateSubtree(node.next));
+                output.append("</h" + num + "> ");
+                break;
+
+            case Ital:
+                if (node.nested == null) {
+                    output.append("</i> ");
+                }
+                else {
+                    output.append("<i>");
+                    output.append(translateSubtree(node.nested));
+                    output.append(translateSubtree(node.next));
+                }
+                break;
+
+            case Bold:
+                if (node.nested == null) {
+                    output.append("</b> ");
+                }
+                else {
+                    output.append("<b>");
+                    output.append(translateSubtree(node.nested));
+                    output.append(translateSubtree(node.next));
+                }
+                break;
+
+            case Strike:
+                if (node.nested == null) {
+                    output.append("</strikethrough> ");
+                }
+                else {
+                    output.append("<strikethrough>");
+                    output.append(translateSubtree(node.nested));
+                    output.append(translateSubtree(node.next));
+                }
+                break;
+
+            case Code:
+                if (node.nested == null) {
+                    output.append("</code>");
+                }
+                else {
+                    output.append("<code>");
+                    output.append(translateSubtree(node.nested));
+                    output.append(translateSubtree(node.next));
+                }
+                break;
+
+            case QuoteBlock:
+
+                output.append("<blockquote> \n");
+
+                while (!node.next.value.equals(ParserState.QuoteBlock)) {
+                    node = node.next;
+
+                    output.append("<p> ");
+
+                    if (node.nested == null) {
+
+                        if (node.next.equals(ParserState.NewLine)) {
+                            output.append("</p>\n");
+                        }
+                        else {
+                            output.append(node.value.getToken().getValue());
+                        }
+                    }
+                    else {
+                        output.append(translateSubtree(node));
+                    }
+                }
+                output.append("</blockquote> \n\n");
+                break;
+
+            case CodeBlock:
+
+                output.append("<pre>\n");
+
+                while (!node.next.value.equals(ParserState.CodeBlockClose)) {
+                    node = node.next;
+
+                    output.append(node.value.getToken().getValue());
+                }
+
+                output.append("</pre> \n\n");
+
+                break;
+
+            case OrderedList {
+        }
+
     }
 
 }

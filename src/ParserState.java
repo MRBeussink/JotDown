@@ -1,5 +1,3 @@
-import jdk.nashorn.internal.parser.*;
-import jdk.nashorn.internal.parser.Lexer;
 
 /**
  * Created by markbeussink on 11/29/16.
@@ -107,15 +105,91 @@ public enum ParserState {
 
     QuoteBlock {
 
-        @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
+        @Override public boolean isClosingState(ParserState state) { return state.equals(QuoteBlock); }
+
+        /*
+        @Override public ParserState transition(LexerToken token) {
+
+            switch (token) {
+                // Emphasis
+
+                case Ital:
+                    return Ital;
+
+                case Bold:
+                    return Bold;
+
+                case Strike:
+                    return Strike;
+
+                // Text
+                case Text:
+                    return QuoteBlockText;
+
+                default:
+                    return null;
+            }
+        }
+        */
     },
 
+    /*
+    QuoteBlockText {
+
+        @Override public ParserState transition(LexerToken token) {
+
+            switch (token) {
+
+            }
+        }
+    },
+
+    QuoteBlockClose {
+
+        @Override public ParserState transition(LexerToken token) {
+
+        }
+    },
+
+    */
     CodeBlock {
 
         @Override public boolean allowsEmphasis() { return false; }
 
-        @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
+        @Override public boolean isClosingState(ParserState state) { return state.equals(ParserState.CodeBlockClose); }
+
+        @Override public ParserState transition(LexerToken token) {
+
+            switch (token) {
+                case Text:
+                    return CodeBlockText;
+                default:
+                    return null;
+            }
+        }
     },
+
+
+    CodeBlockText {
+
+        @Override ParserState transition(LexerToken token) {
+
+            switch (token) {
+                case Text:
+                    return CodeBlockText;
+                case CBlock:
+                    return CodeBlockClose;
+            }
+        }
+    },
+
+    CodeBlockClose {
+
+        @Override ParserState transition(LexerToken token) {
+
+        }
+    },
+
 
     OrderedList { },
 
@@ -123,13 +197,123 @@ public enum ParserState {
 
     Link {
 
-        @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
+        @Override public boolean isClosingState(ParserState state) { return state.equals(LinkClose); }
+
+        @Override public ParserState transition(LexerToken token) {
+
+            switch (token) {
+
+                case Text:
+                    return LinkText;
+                default:
+                    return null;
+            }
+        }
     },
+
+    LinkText {
+
+        @Override public ParserState transition(LexerToken token) {
+
+            switch (token) {
+
+                case Split:
+                    return LinkSplit;
+                default:
+                    return null;
+            }
+        }
+    },
+
+    LinkSplit {
+
+        @Override public ParserState transition(LexerToken token) {
+
+            switch (token) {
+
+                case Text:
+                    return LinkURL;
+                default:
+                    return null;
+            }
+        }
+    },
+
+    LinkURL{
+
+        @Override public ParserState transition(LexerToken token) {
+
+            switch (token) {
+                case LinkClose:
+                    return LinkClose;
+                default:
+                    return null;
+            }
+        }
+    },
+
+    LinkClose { },
+
 
     Image {
 
-        @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
+        @Override public boolean isClosingState(ParserState state) { return state.equals(ImageClose); }
+
+        @Override public ParserState transition(LexerToken token) {
+
+            switch (token) {
+
+                case Text:
+                    return ImageText;
+                default:
+                    return null;
+            }
+        }
     },
+
+    ImageText {
+
+        @Override public ParserState transition(LexerToken token) {
+
+            switch (token) {
+
+                case Split:
+                    return ImageSplit;
+                default:
+                    return null;
+            }
+        }
+    },
+
+    ImageSplit {
+
+        @Override public ParserState transition(LexerToken token) {
+
+            switch (token) {
+
+                case Text:
+                    return ImageURL;
+                default:
+                    return null;
+            }
+        }
+    },
+
+    ImageURL{
+
+        @Override public ParserState transition(LexerToken token) {
+
+            switch (token) {
+
+                case ImgClose:
+                    return LinkClose;
+                default:
+                    return null;
+            }
+        }
+    },
+
+    ImageClose { },
 
     Text {
 
@@ -157,15 +341,6 @@ public enum ParserState {
 
                     case CBlock:
                         return CodeBlock;
-
-                    case LinkClose:
-                        return Link;
-
-                    case ImgClose:
-                        return Image;
-
-                    case Split:
-                        return Text;
 
                     default:
                         break;
@@ -224,6 +399,7 @@ public enum ParserState {
 
         return false;
     }
+
 
     // public class FSMTransitionException extends Exception { }
 }
