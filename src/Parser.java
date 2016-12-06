@@ -64,7 +64,7 @@ public class Parser  {
         // loop over lexemes until EoF
         do {
 
-            try {
+            //try {
                 tkn = lxr.lex();
                 ParserState state = states.lastElement().transition(tkn);   // transition the last state
 
@@ -82,11 +82,12 @@ public class Parser  {
 
                 state.setToken(tkn);                                // store original token
                 states.add(state);                                  // store the new state
+                /*
             } catch (IOException e) {
                 System.out.println("IOException while lexing. \n\t ending early");
 
                 states.addElement(ParserState.End);
-            }
+            } */
         } while (!states.lastElement().equals(ParserState.End));
 
         // build a tree

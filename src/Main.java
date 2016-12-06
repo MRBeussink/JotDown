@@ -3,30 +3,39 @@ import java.io.*;
 public class Main {
 
 	 public static void main(String[] args) throws IOException {
-		 
-		String template;
-		StringBuilder output;
-		template = args[1];
-		String outputfile = null;
-		
-		int i = 0;
-		while(template.charAt(i) != '.'){
-			outputfile = outputfile + template.charAt(i);
-			i++;
-		}
-		FileReader infile = new FileReader(args[1]);
-		FileWriter outfile = new FileWriter(outputfile + ".html");
-		
-		Parser prsr = new Parser(infile);
-		prsr.parse();
 
-		 System.out.println("Parsing file");
-		output = prsr.parse();
-		 
-		 // write output to file
+		 //if (args.length == 2) {
+			 String template
+					 = "<!doctype html>\n\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>The HTML5 Herald</title>\n<meta name=\"description\" content=\"The HTML5 Herald\">\n<meta name=\"author\" content=\"SitePoint\">\n<link rel=\"stylesheet\" href=\"css/styles.css?v=1.0\">\n\n</head>\n\n";
+			 StringBuilder output;
+			 String filename = "";
+		 	for (String arg : args) {
+				filename += arg + " ";
+			}
+		 	System.out.println("Trying to open " + filename);
+			 String outputfile = "";
 
-		 outfile.write(output.toString());
-		 
-		 System.out.println("Yaata~");
+			 int i = 0;
+			 while (template.charAt(i) != '.') {
+				 outputfile = outputfile + template.charAt(i);
+				 i++;
+			 }
+			 FileReader infile = new FileReader(filename);
+			 FileWriter outfile = new FileWriter(outputfile + ".html");
+
+			 Parser prsr = new Parser(infile);
+			 prsr.parse();
+
+			 System.out.println("Parsing file");
+			 output = prsr.parse();
+
+			 // write output to file
+
+			 outfile.write(output.toString());
+
+			 System.out.println("Yaata~");
+		 //}
+
+		 //System.out.println("No input file \nTerminating...");
 	 }
 }

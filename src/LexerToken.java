@@ -71,10 +71,11 @@ public enum LexerToken {
     },
     EoF;
 
-    private String value;
+    protected String value;
 	public void setValue(String value) { }
 	public String getValue() { return null; }
 
+    /*
     public static void main(String[] args){
 
         LexerToken tkn = LexerToken.Header;
@@ -84,4 +85,5 @@ public enum LexerToken {
         tkn = LexerToken.HrzRule;
         System.out.println(tkn.getValue());     // Output: null
     }
+    */
 }
