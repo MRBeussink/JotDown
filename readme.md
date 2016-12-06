@@ -21,7 +21,7 @@ A lightweight markup language syntax and lexer/parser/tranlator inspired by John
 | Blockquotes                    | `<blockquote> … </blockquote>`        | ` >> … >> `                 |
 | Links                          | `<a href = "link"> text </a>`         | `[text : link]`             |
 | Image                          | `<img src = "source" title = "text">` | `{text : source}`           |
-| Ordered List                   |                                       | `1. text`                   |
+| Ordered List                   |                                       | `- text`                    |
 | Unordered List                 |                                       | `* text`                    |
 |                                |                                       |                             |
 |                                |                                       |                             |
