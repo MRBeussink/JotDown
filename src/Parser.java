@@ -64,25 +64,30 @@ public class Parser  {
         // loop over lexemes until EoF
         do {
 
-            tkn = lxr.lex();
-            ParserState state = states.lastElement().transition(tkn);   // transition the last state
+            try {
+                tkn = lxr.lex();
+                ParserState state = states.lastElement().transition(tkn);   // transition the last state
 
-            // ToDo: fix this
-            // change to text with
-            while (tkn == null) {
-                System.out.printf("Cannot transition from State: %s, via token: %s",
-                        states.lastElement().name(), tkn.name());
+                // ToDo: fix this
+                // change to text with
+                while (tkn == null) {
+                    System.out.printf("Cannot transition from State: %s, via token: %s",
+                            states.lastElement().name(), tkn.name());
 
-                LexerToken txt = LexerToken.Text;
-                txt.setValue(tkn.getValue());
+                    LexerToken txt = LexerToken.Text;
+                    txt.setValue(tkn.getValue());
 
-                state = states.lastElement().transition(txt);
+                    state = states.lastElement().transition(txt);
+                }
+
+                state.setToken(tkn);                                // store original token
+                states.add(state);                                  // store the new state
+            } catch (IOException e) {
+                System.out.println("IOException while lexing. \n\t ending early");
+
+                states.addElement(ParserState.End);
             }
-
-            state.setToken(tkn);                                // store original token
-            states.add(state);                                  // store the new state
-
-        } while (!states.lastElement().equals(ParserState.End.name()));
+        } while (!states.lastElement().equals(ParserState.End));
 
         // build a tree
         stateTree = new DOMTree(states.firstElement());
@@ -279,12 +284,16 @@ public class Parser  {
                     break;
 
                 case OrderedList:
-                    output.append("<ol>");
+                    output.append("<ol>\n");
+                    break;
+
+                case UnorderedList:
+                    output.append("<ul>\n");
                 default:
                     break;
 
             }
-            output.append(node.translateSubtree(node));
+            output.append(translateSubtree(node));
 
             switch (node.value) {
 
@@ -405,9 +414,126 @@ public class Parser  {
 
                 break;
 
-            case OrderedList {
+            case OrderedList:
+
+                while (!node.next.value.equals(ParserState.NewLine)){
+
+                    if (node.nested == null){
+                        output.append(translateSubtree(node.next));
+                    }
+                    else {
+                        output.append("<li> \n<p>");
+                        output.append(translateSubtree(node.nested));
+                        output.append("</p>\n</li>\n");
+                        node = node.next;
+
+                        /// I need the nested list item to have open and close tags
+                    }
+                }
+
+                output.append("</ol>\n\n");
+
+                break;
+
+            case UnorderedList:
+
+                while (!node.next.value.equals(ParserState.NewLine)){
+
+                    if (node.nested == null){
+                        output.append(translateSubtree(node.next));
+                    }
+                    else {
+                        output.append("<li> \n<p>");
+                        output.append(translateSubtree(node.nested));
+                        output.append("</p>\n</li>\n");
+                        node = node.next;
+
+                        /// I need the nested list item to have open and close tags
+                    }
+                }
+
+                output.append("</ul>\n\n");
+
+                break;
+
+            case Link:
+
+                String open = "<a href=\"";
+                String url = "missing url";
+                String middle = "\">";
+                String text = "missing text";
+                String close = "</a>";
+
+                DOMNode findingNode = node.nested;
+
+                // get url
+                while (!findingNode.value.equals(ParserState.LinkURL) && findingNode.next != null) {
+
+                    findingNode = node.next;
+                }
+
+                if (findingNode.value.equals(ParserState.LinkURL) && findingNode.next != null) {
+                    url = findingNode.value.getToken().getValue();
+                }
+
+                findingNode = node.nested;
+
+                while (!findingNode.value.equals(ParserState.LinkText)  && findingNode.next != null) {
+
+                    findingNode = node.next;
+                }
+
+                if (findingNode.value.equals(ParserState.LinkText)  && findingNode.next != null) {
+                    text = findingNode.value.getToken().getValue();
+                }
+
+                StringBuilder temp = new StringBuilder(open + url + middle + text + close);
+                output.append(open + url + middle + text + close);
+                break;
+
+            case Image:
+
+                open = "<img src\"";
+                String src = "missing url";
+                middle = " alt=\"";
+                text = "missing text";
+                close = "\">";
+
+                findingNode = node.nested;
+
+                // get url
+                while (!findingNode.value.equals(ParserState.ImageURL) && findingNode.next != null) {
+
+                    findingNode = node.next;
+                }
+
+                if (findingNode.value.equals(ParserState.ImageURL) && findingNode.next != null) {
+                    url = findingNode.value.getToken().getValue();
+                }
+
+                findingNode = node.nested;
+
+                while (!findingNode.value.equals(ParserState.ImageText)  && findingNode.next != null) {
+
+                    findingNode = node.next;
+                }
+
+                if (findingNode.value.equals(ParserState.ImageText)  && findingNode.next != null) {
+                    text = findingNode.value.getToken().getValue();
+                }
+
+                output.append(open + src + middle + text + close);
+                break;
+
+            default:
+                System.out.println("Translation switch statement has defaulted");
+                output.append("ERROR");
+                break;
+
+
         }
 
+        return output;
     }
 
 }

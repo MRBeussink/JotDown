@@ -98,7 +98,7 @@ public enum ParserState {
 
     Code {
 
-        @Override public boolean allowsEmphasis() { return false; }
+        // @Override public boolean allowsEmphasis() { return false; }
 
         @Override public boolean isClosingState(ParserState state) { return state.equals(this); }
     },
@@ -154,7 +154,7 @@ public enum ParserState {
     */
     CodeBlock {
 
-        @Override public boolean allowsEmphasis() { return false; }
+        // @Override public boolean allowsEmphasis() { return false; }
 
         @Override public boolean isClosingState(ParserState state) { return state.equals(ParserState.CodeBlockClose); }
 
@@ -172,28 +172,37 @@ public enum ParserState {
 
     CodeBlockText {
 
-        @Override ParserState transition(LexerToken token) {
+        @Override public ParserState transition(LexerToken token) {
 
             switch (token) {
                 case Text:
                     return CodeBlockText;
                 case CBlock:
                     return CodeBlockClose;
+                default:
+                    break;
             }
+
+            return null;
         }
     },
 
-    CodeBlockClose {
+    CodeBlockClose { },
 
-        @Override ParserState transition(LexerToken token) {
 
-        }
+    OrderedList {
+
+        @Override public boolean isClosingState(ParserState state) { return state.equals(NewLine); }
+
+        @Override public boolean allowsNesting() { return true; }
     },
 
+    UnorderedList {
 
-    OrderedList { },
+        @Override public boolean isClosingState(ParserState state) { return state.equals(NewLine); }
 
-    UnorderedList { },
+        @Override public boolean allowsNesting() { return true; }
+    },
 
     Link {
 
@@ -389,9 +398,9 @@ public enum ParserState {
         return false;
     }
 
-    public boolean allowsEmphasis() {
-        return true;
-    }
+    // public boolean allowsEmphasis() {
+        // return true;
+    // }
 
     public boolean isClosingState(ParserState state) {
         if (state.equals(NewLine) || state.equals(End))
