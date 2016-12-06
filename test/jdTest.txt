@@ -1,0 +1,15 @@
+#1 This is the test document
+***
+_I *hope* this -werks- works_
+`this should be code`
+
+>>Quote>>
+
+* item
+* item
+
+- item 1
+- item 2
+
+[ link : github.com/MRBeussink/JotDown ]
+{ image : broken }
