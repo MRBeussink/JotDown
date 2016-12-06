@@ -5,22 +5,33 @@ import java.io.*;
 
 public class Lexer {
 
+	
+		
 	private BufferedReader input;
 	private String lexeme;
 	private int position;
 	LexerToken token;
 	private String line = null;
+	private boolean bold = false, italic = false, strike = false, qBlock = false, imgOpen = false, split = false, imgClose = false,
+			linkOpen = false, linkClose = false;
 	
+	
+			//The constructor 
 	public Lexer (FileReader input) {
 		this.input = new BufferedReader(input);
 		position = 0;
 		
 	}
-	public LexerToken lex() throws IOException{
+	
+	
+			//This Method Calls getLexeme() then matches the lexeme String to a enum w/wo value
+	public LexerToken lex() {
 		lexeme ="";
 		
 		getLexeme();
 		
+		
+		//Matches the lexeme string to a case and Assigns an enum to Token
 		switch(lexeme){
 		case "#1":
 			token = LexerToken.Header;
@@ -85,121 +96,445 @@ public class Lexer {
 		case ":":
 			token = LexerToken.Split;
 			break;
+		case "":
+			token = LexerToken.EoF;
 		default:
 			token = LexerToken.Text;
 			token.setValue(lexeme);
 		}
+		
+		
 		return token;
 	}
-	private void getLexeme() throws IOException {
+	
+	
+	
+							//This Method Obtains the Lexeme
+	private void getLexeme() {
 		if(line == null ){
-			line = input.readLine();
+			try {
+				line = input.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			position = 0;
 		}else if(line != null && position >= line.length()){
 			lexeme += "newline";
-			line = input.readLine();
+			try {
+				line = input.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			position = 0;
-		}else if(line != null){
+		}else if(line != null && position < line.length()){
 				switch(line.charAt(position)){
 					case '\\':
-						lexeme += line.charAt(position) + line.charAt(position +1);
+						lexeme += line.charAt(position +1);
 						position += 2;
-						while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']') && (line.charAt(position - 1) != '\\')) && position < line.length()){
-								lexeme += line.charAt(position);
-								position++;
+						while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+								
+								if(line.charAt(position) == '\\'){
+									lexeme += line.charAt(position +1);
+									position += 2;
+								}else{
+									lexeme += line.charAt(position);
+									position++;
+								}
 						}
 						break;
 					case '#':
-						switch(line.charAt(position +1)){
-						case '1':
+						if(line.charAt(position +1) == (1 | 2 | 3 | 4 | 5 | 6)){
 							lexeme += line.charAt(position) + line.charAt(position +1);
 							position += 2;
-							break;
-						case '2':
-							lexeme += line.charAt(position) + line.charAt(position +1);
-							position += 2;
-							break;
-						case '3':
-							lexeme += line.charAt(position) + line.charAt(position +1);
-							position += 2;
-							break;
-						case '4':
-							lexeme += line.charAt(position) + line.charAt(position +1);
-							position += 2;
-							break;
-						case '5':
-							lexeme += line.charAt(position) + line.charAt(position +1);
-							position += 2;
-							break;
-						case '6':
-							lexeme += line.charAt(position) + line.charAt(position +1);
-							position += 2;
-							break;
+						}else{
+							lexeme += line.charAt(position);
+							position++;
+							while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+								if(line.charAt(position) == '\\'){
+									lexeme += line.charAt(position +1);
+									position += 2;
+								}else{
+									lexeme += line.charAt(position);
+									position++;
+								}
+								
+							}
 						}
+					
 					
 						break;
 					case '*':
 							if(line.charAt(position + 1)== '*' && line.charAt(position + 2) == '*'){
 								lexeme += "***";
-							}else if(line.charAt(position + 1) == ' '){
+							}else if(line.charAt(position + 1) == ' ' && line.charAt(0) == '*' && position == 0){
 								lexeme += "unordered";
 								position++;
 							}else{
-								lexeme += "bold";
-								position++;
+								if(bold){
+									if(line.charAt(position - 1) != ' '){
+										lexeme += "bold";
+										bold = false;
+									}
+								}else{
+									for (int i = position +1;i < line.length(); i++){
+										if(line.charAt(i) == '*'){
+											if(line.charAt(i - 1) != ' '){
+												if(line.charAt(position - 1) == ' ' || position == 0){
+													lexeme += "bold";
+													position++;
+													bold = true;
+												}
+											}
+										}
+									}
+								}
+								if(!lexeme.equals("bold")){
+									lexeme += line.charAt(position);
+									position++;
+									while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+										if(line.charAt(position) == '\\'){
+											lexeme += line.charAt(position +1);
+											position += 2;
+										}else{
+											lexeme += line.charAt(position);
+											position++;
+										}
+									}
+								}
 							}
 						break;
 					case '_':
-							if(line.charAt(position +1) != ' '){
-								lexeme += "_";
-								position++;
+							if(italic){
+								if(line.charAt(position -1) != ' '){
+									lexeme += "_";
+									position++;
+									italic = false;
+								}else{
+									lexeme += line.charAt(position);
+									position++;
+								
+									while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+										if(line.charAt(position) == '\\'){
+											lexeme += line.charAt(position +1);
+											position += 2;
+										}else{
+											lexeme += line.charAt(position);
+											position++;
+										}
+									
+									}
+								}
+							}else{
+								if(line.charAt(position +1) != ' ' && line.charAt(position -1) == ' '){
+									for(int i = position +1; i < line.length(); i++){
+										if(line.charAt(i) == '_' && line.charAt(i - 1) != ' '){
+											lexeme += "_";
+											position++;
+											italic = true;
+										}
+									}if(!italic){
+										lexeme += line.charAt(position);
+										position++;
+										while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+											if(line.charAt(position) == '\\'){
+												lexeme += line.charAt(position +1);
+												position += 2;
+											}else{
+												lexeme += line.charAt(position);
+												position++;
+											}
+											
+										}
+									}
+								}else{
+									lexeme += line.charAt(position);
+									position++;
+								
+									while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+										if(line.charAt(position) == '\\'){
+											lexeme += line.charAt(position +1);
+											position += 2;
+										}else{
+											lexeme += line.charAt(position);
+											position++;
+										}
+									
+									}
+								}
 							}
 						break;
 					case '-':
-							if (line.charAt(position +1) == ' '){
+							if (line.charAt(position +1) == ' ' && position == 0){
 								lexeme += "ordered";
 								position++;
-							}else{
-								lexeme += "strike";
-								position++;
+							}else {
+								if(strike){
+									if (line.charAt(position -1) != ' '){
+										lexeme += "strike";
+										strike = false;
+									}else{
+										lexeme += line.charAt(position);
+										position++;
+										while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+											if(line.charAt(position) == '\\'){
+												lexeme += line.charAt(position +1);
+												position += 2;
+											}else{
+												lexeme += line.charAt(position);
+												position++;
+											}
+											
+										}
+									}
+								}else{
+									for (int i = position +1; i < line.length();i++){
+										if(line.charAt(i) == '-' && line.charAt(i - 1) != ' '){
+											lexeme += "strike";
+											position++;
+											strike = true;
+										}
+									}if (!strike){
+										lexeme += line.charAt(position);
+										position++;
+										while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+											if(line.charAt(position) == '\\'){
+												lexeme += line.charAt(position +1);
+												position += 2;
+											}else{
+												lexeme += line.charAt(position);
+												position++;
+											}
+											
+										}
+									}
+									
+								}
 							}
 						break;
 					case '>':
 							if(line.charAt(position +1) == '>'){
-								lexeme += ">>";
+								if(qBlock){
+									lexeme += ">>";
+								}else{
+									for(int i = position + 2; i < line.length(); i++){
+										if(line.charAt(i) == '>' && line.charAt(i + 1) == '>'){
+											lexeme += ">>";
+											qBlock = true;
+										}
+									}if (!qBlock){
+										lexeme += line.charAt(position);
+										position++;
+										while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+											if(line.charAt(position) == '\\'){
+												lexeme += line.charAt(position +1);
+												position += 2;
+											}else{
+												lexeme += line.charAt(position);
+												position++;
+											}
+										
+										}
+									}
+								}
 							}else{
 								lexeme += line.charAt(position);
 								position++;
-								while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{') && (line.charAt(position - 1) != '\\')) && position < line.length()){
-									lexeme += line.charAt(position);
-									position++;
+								while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+									if(line.charAt(position) == '\\'){
+										lexeme += line.charAt(position +1);
+										position += 2;
+									}else{
+										lexeme += line.charAt(position);
+										position++;
+									}
+									
 								}
 							}
 						break;
 					case '[':
-							lexeme += "[";
-							position++;
+							if(linkOpen){
+								lexeme += line.charAt(position);
+								position++;
+								while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+									if(line.charAt(position) == '\\'){
+										lexeme += line.charAt(position +1);
+										position += 2;
+									}else{
+										lexeme += line.charAt(position);
+										position++;
+									}
+									
+								}
+							}
+							else{	
+								for(int i = position + 1; i < line.length(); i++){
+									if(line.charAt(i) == ':'){
+										split = true;
+									}else if (line.charAt(i) == ']'){
+										linkClose = true;
+									}
+									
+								}if(split && linkClose && !imgOpen){
+									lexeme += "[";
+									position++;
+									linkOpen = true;
+									split = false;
+									linkClose = false;
+								}else{
+									lexeme += line.charAt(position);
+									position++;
+									while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+										if(line.charAt(position) == '\\'){
+											lexeme += line.charAt(position +1);
+											position += 2;
+										}else{
+											lexeme += line.charAt(position);
+											position++;
+										}
+										
+									}
+								}
+								
+							}
 						break;
 					case '{':
-							lexeme += "{";
-							position++;
-						break;
-					case ']':
-						lexeme += "]";
-						position++;
-						break;
-					case '}':
-						lexeme += "}";
-						position++;
-						break;
-					case ':':
-						lexeme += ":";
-						position++;
-						break;
-					default:
-						while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') && (line.charAt(position - 1) != '\\')) && position < line.length()){
+						if(imgOpen){
 							lexeme += line.charAt(position);
 							position++;
+							while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+								if(line.charAt(position) == '\\'){
+									lexeme += line.charAt(position +1);
+									position += 2;
+								}else{
+									lexeme += line.charAt(position);
+									position++;
+								}
+								
+							}
+						}
+						else{	
+							for(int i = position + 1; i < line.length(); i++){
+								if(line.charAt(i) == ':'){
+									split = true;
+								}else if (line.charAt(i) == ']'){
+									imgClose = true;
+								}
+								
+							}if(split && imgClose && !linkOpen){
+								lexeme += "{";
+								position++;
+								imgOpen = true;
+								split = false;
+								imgClose = false;
+							}else{
+								lexeme += line.charAt(position);
+								position++;
+								while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+									if(line.charAt(position) == '\\'){
+										lexeme += line.charAt(position +1);
+										position += 2;
+									}else{
+										lexeme += line.charAt(position);
+										position++;
+									}
+									
+								}
+							}
+							
+						}
+						break;
+					case ']':
+						if (linkOpen && split){
+							lexeme += "]";
+							position++;
+							split = false;
+							imgOpen = false;
+						}else{
+							lexeme += line.charAt(position);
+							position++;
+							while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+								if(line.charAt(position) == '\\'){
+									lexeme += line.charAt(position +1);
+									position += 2;
+								}else{
+									lexeme += line.charAt(position);
+									position++;
+								}
+								
+							}
+						}
+						
+						break;
+					case '}':
+						if (imgOpen && split){
+							lexeme += "}";
+							position++;
+							split = false;
+							imgOpen = false;
+						}else{
+							lexeme += line.charAt(position);
+							position++;
+							while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+								if(line.charAt(position) == '\\'){
+									lexeme += line.charAt(position +1);
+									position += 2;
+								}else{
+									lexeme += line.charAt(position);
+									position++;
+								}
+								
+							}
+						}
+						break;
+					case ':':
+						if(imgOpen || linkOpen){
+							lexeme += ":";
+							position++;
+							split = true;
+						}else{
+							lexeme += line.charAt(position);
+							position++;
+							while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+								if(line.charAt(position) == '\\'){
+									lexeme += line.charAt(position +1);
+									position += 2;
+								}else{
+									lexeme += line.charAt(position);
+									position++;
+								}
+								
+							}
+						}
+						break;
+					default:
+						lexeme += line.charAt(position);
+						position++;
+						while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+
+							if(line.charAt(position) == '\\'){
+								lexeme += line.charAt(position +1);
+								position += 2;
+							}else{
+								lexeme += line.charAt(position);
+								position++;
+							}
+							
 						}
 						break;
 			}
