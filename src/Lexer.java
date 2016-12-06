@@ -63,6 +63,9 @@ public class Lexer {
 		case "unordered":
 			token = LexerToken.UList;
 			break;
+		case "code":
+			token = LexerToken.Code;
+			break;
 		case "bold":
 			token = LexerToken.Bold;
 			break;
@@ -126,7 +129,7 @@ public class Lexer {
 				e.printStackTrace();
 			}
 			position = 0;
-		}else if(line != null && position < line.length()){
+		}else if(line != null && position < (line.length() -1)){
 				switch(line.charAt(position)){
 					case '\\':
 						lexeme += line.charAt(position +1);
@@ -408,6 +411,33 @@ public class Lexer {
 								
 							}
 						break;
+					case '\'':
+						if(line.charAt(position -1) == ' '){
+							for (int i = position +1; i < line.length(); i++){
+								if(line.charAt(i) == '\''){
+									lexeme += "code";
+									position++;
+								}
+							}
+						}else{
+							lexeme += line.charAt(position);
+							if(position +1 < line.length()){
+								position++;
+							}
+							while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position <= (line.length() -1)){
+
+								if(line.charAt(position) == '\\'){
+									lexeme += line.charAt(position +1);
+									position += 2;
+								}else{
+									lexeme += line.charAt(position);
+									position++;
+								}
+								
+							}
+						}
+							
+						break;
 					case '{':
 						if(imgOpen){
 							lexeme += line.charAt(position);
@@ -524,8 +554,10 @@ public class Lexer {
 						break;
 					default:
 						lexeme += line.charAt(position);
-						position++;
-						while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position < line.length()){
+						if(position +1 < line.length()){
+							position++;
+						}
+						while((line.charAt(position) != ('#'| '*' | '-' | '_'| '>' | '[' | '{' | '}' | ']' | ':') || (line.charAt(position - 1) == '\\')) && position <= (line.length() -1)){
 
 							if(line.charAt(position) == '\\'){
 								lexeme += line.charAt(position +1);
