@@ -18,7 +18,7 @@ A lightweight markup language syntax and lexer/parser/tranlator inspired by John
 | <strike>Strikethrough</strike> | `<strike> strike </strike>`           | `-strike-`                  |
 | `code`                         | `<code> code </code>`                 | <code>\`code\`</code>       |
 | Multi-line Code Block          |                                       | <code> \`\`\` \`\`\`</code> |
-| Blockquotes                    | `<blockquote> … </blockquote>`        | ` >> … >> `                 |
+| Blockquotes                    | `<blockquote> … </blockquote>`        | ` >> … `                    |
 | Links                          | `<a href = "link"> text </a>`         | `[text : link]`             |
 | Image                          | `<img src = "source" title = "text">` | `{text : source}`           |
 | Ordered List                   |                                       | `- text`                    |
