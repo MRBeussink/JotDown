@@ -5,14 +5,14 @@ import java.io.*;
  */
 public class JotDown {
 
-    private String templateOpen = "<!DOCTYPE html> \n" +
-                              "<html>\n" +
+    private static String templateOpen = "<!DOCTYPE html> \n" +
+                              "<html>\n\n" +
                               "<head>\n" +
                               "<title>JotDownTest</title>\n"+
                               "</head>\n\n" +
-                              "<body>";
+                              "<body>\n\n";
 
-    private String templateClose = "\n\n</body>\n\n</html>";
+    private static String templateClose = "\n\n</body>\n\n</html>";
 
 
     public static void main(String[] args) {
@@ -42,13 +42,16 @@ public class JotDown {
         JDParser prsr = new JDParser(lxr);
 
         output = prsr.parse();
-
+        
+        System.out.println(templateOpen + output + templateClose);
+        
+        /*
         // System.out.println(filename.substring(0, filename.length() - 4));
         outputName = filename.substring(0, filename.length() - 4) + ".html";
 
 
         File outputFile = new File(outputName);
-
+		*/
 
     }
 }
