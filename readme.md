@@ -38,7 +38,7 @@ A lightweight markup language syntax and lexer/parser/tranlator inspired by John
 |                  | `codeBlock <Paragraph> codeBlock`        |
 |                  | `orderedList <Paragraph> newLine`        |
 |                  | `unOrderedList <Paragraph> newLine`      |
-|                  | `<Line>                                  |
+|                  | `<Line>`                                 |
 | `<Paragraph> ->` | `bold <Paragraph> bold <Paragraph>`      |
 |                  | `ital <Paragraph> ital <Paragraph>`      |
 |                  | `strike <Paragraph> strike <Pargraph>`   |
