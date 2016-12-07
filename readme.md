@@ -30,13 +30,15 @@ A lightweight markup language syntax and lexer/parser/tranlator inspired by John
 
 | Abstractions     | Definitions                              |
 | ---------------- | ---------------------------------------- |
-| `<Body> ->`      | `<Header> <Paragraph> newLine`           |
+| `<Body>->`       | `<Line> end`                             |
+| `<Line>->`       | `<Header> <Paragraph> newLine`           |
 |                  | `horizontalRule newLine`                 |
 |                  | `<Paragraph> newLine`                    |
 |                  | `quoteBlock <Paragraph> newLine`         |
 |                  | `codeBlock <Paragraph> codeBlock`        |
 |                  | `orderedList <Paragraph> newLine`        |
 |                  | `unOrderedList <Paragraph> newLine`      |
+|                  | `<Line>                                  |
 | `<Paragraph> ->` | `bold <Paragraph> bold <Paragraph>`      |
 |                  | `ital <Paragraph> ital <Paragraph>`      |
 |                  | `strike <Paragraph> strike <Pargraph>`   |
