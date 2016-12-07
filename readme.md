@@ -26,26 +26,31 @@ A lightweight markup language syntax and lexer/parser/tranlator inspired by John
 |                                |                                       |                             |
 |                                |                                       |                             |
 
-## EBNF
+## BNF
 
-### 
-
-```
-<Body> 	 	-> (<Header> | <HR> | <Paragraph> | <Block> | <List>) NL
-<Header> 	-> (h1|h2|h3|h4|h5|h6) <Space> <Text> NL
-<HR> 	 	-> HR NL
-<Paragraph> -> <Text> NL {<Paragraph>}
-<Emphasis> 	-> (<Code> | <Ital> | <Bold> | <Strike>) <Text> (<Code> | <Ital> | <Bold> | <Strike>)
-<Block>		-> (<CBlock> | <QBlock>) <Text>* (<CBlock> | <QBlock>) NL
-<Code Block> -> <CBlock> <Text> <CBlock>
-<Block Quote>  -> <QBlock> {<Paragraph>} <QBlock>
-<List>		-> {Tab} (<OL> | <UL>) <Space> <ListItem> (<OL> | <UL>) <List>}
-<ListItem> -> <Text> NL
-<ImageLink> -> ( <Image> | <Link> )
-<Image> -> { <Text> : <Text> }
-<Link> -> [ <Text> : <Text> ]
-<Text> 		-> Any set of characters
-```
-
-- [] Add EBNF for Links and Images (and tables?)
-- [x] Fix EBNF for Blocks and Lists
+| Abstractions     | Definitions                              |
+| ---------------- | ---------------------------------------- |
+| `<Body> ->`      | `<Header> <Paragraph> newLine`           |
+|                  | `horizontalRule newLine`                 |
+|                  | `<Paragraph> newLine`                    |
+|                  | `quoteBlock <Paragraph> newLine`         |
+|                  | `codeBlock <Paragraph> codeBlock`        |
+|                  | `orderedList <Paragraph> newLine`        |
+|                  | `unOrderedList <Paragraph> newLine`      |
+| `<Paragraph> ->` | `bold <Paragraph> bold <Paragraph>`      |
+|                  | `ital <Paragraph> ital <Paragraph>`      |
+|                  | `strike <Paragraph> strike <Pargraph>`   |
+|                  | `code <Paragraph> code <Paragraph>`      |
+|                  | `<Link> <Paragraph>`                     |
+|                  | `<Image> <Paragraph>`                    |
+|                  | `<Text> <Paragraph>`                     |
+|                  | `newLine`                                |
+| `<Header> ->`    | `h1 <Paragraph> newLine`                 |
+|                  | `h2 <Paragraph> newLine`                 |
+|                  | `h3 <Paragraph> newLine`                 |
+|                  | `h4 <Paragraph> newLine`                 |
+|                  | `h5 <Paragraph> newLine`                 |
+|                  | `h6 <Paragraph> newLine`                 |
+| `<Link> ->`      | `linkOpen <Paragraph> split <Text> linkClose ` |
+| `<Image> ->`     | `imageOpen <Text> split <Text> imageClose` |
+| `<Text> ->`      | `text <Text>`                            |
