@@ -2,7 +2,7 @@
  */
 
 
-public enum LexerToken {
+public enum JDLexerToken {
 
     /*
         * headers
@@ -19,6 +19,30 @@ public enum LexerToken {
     Header {
     	@Override public void setValue(String value) { this.value = value; }
     	@Override public String getValue() { return this.value; }
+    },
+
+    H1 {
+        @Override public String getValue() {return "#1";}
+    },
+
+    H2 {
+        @Override public String getValue() {return "#2";}
+    },
+
+    H3 {
+        @Override public String getValue() {return "#3";}
+    },
+
+    H4 {
+        @Override public String getValue() {return "#4";}
+    },
+
+    H5 {
+        @Override public String getValue() {return "#5";}
+    },
+
+    H6 {
+        @Override public String getValue() {return "#6";}
     },
     HrzRule {
         @Override public String getValue() { return "***"; }
@@ -78,11 +102,11 @@ public enum LexerToken {
     /*
     public static void main(String[] args){
 
-        LexerToken tkn = LexerToken.Header;
+        JDLexerToken tkn = JDLexerToken.Header;
         tkn.setValue("7");
         System.out.println(tkn.getValue());     // Output: 7
 
-        tkn = LexerToken.HrzRule;
+        tkn = JDLexerToken.HrzRule;
         System.out.println(tkn.getValue());     // Output: null
     }
     */
