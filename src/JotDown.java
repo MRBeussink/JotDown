@@ -41,17 +41,44 @@ public class JotDown {
         JDLexer lxr = new JDLexer(fr);
         JDParser prsr = new JDParser(lxr);
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+        try {
+
+            prsr.parse();
+
+            System.out.println("Yaata~");
+        } catch (JDParser.JDParseError e) {
+
+            System.out.println(e);
+        }
+
+=======
+>>>>>>> Stashed changes
         output = prsr.parse();
         
         System.out.println(templateOpen + output + templateClose);
         
+<<<<<<< Updated upstream
+=======
+>>>>>>> origin/master
+>>>>>>> Stashed changes
         /*
         // System.out.println(filename.substring(0, filename.length() - 4));
         outputName = filename.substring(0, filename.length() - 4) + ".html";
 
 
         File outputFile = new File(outputName);
+<<<<<<< Updated upstream
 		*/
+=======
+<<<<<<< HEAD
+        */
+=======
+		*/
+>>>>>>> origin/master
+>>>>>>> Stashed changes
 
     }
 }
