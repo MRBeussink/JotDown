@@ -31,18 +31,18 @@ A lightweight markup language syntax and lexer/parser/tranlator inspired by John
 | Abstractions     | Definitions                              |
 | ---------------- | ---------------------------------------- |
 | `<Body>->`       | `<Line> end`                             |
-| `<Line>->`       | `<Header> <Paragraph> newLine`           |
+| `<Line>->`       | `<Header>`           |
 |                  | `horizontalRule newLine`                 |
-|                  | `<Paragraph> newLine`                    |
+|                  | `<Paragraph>`                    |
 |                  | `quoteBlock <Paragraph> newLine`         |
-|                  | `codeBlock <Paragraph> codeBlock`        |
+|                  | `codeBlock <Text> codeBlock`        |
 |                  | `orderedList <Paragraph> newLine`        |
 |                  | `unOrderedList <Paragraph> newLine`      |
 |                  | `<Line>`                                 |
 | `<Paragraph> ->` | `bold <Paragraph> bold <Paragraph>`      |
 |                  | `ital <Paragraph> ital <Paragraph>`      |
 |                  | `strike <Paragraph> strike <Pargraph>`   |
-|                  | `code <Paragraph> code <Paragraph>`      |
+|                  | `code <Text> code <Paragraph>`      |
 |                  | `<Link> <Paragraph>`                     |
 |                  | `<Image> <Paragraph>`                    |
 |                  | `<Text> <Paragraph>`                     |
@@ -53,6 +53,6 @@ A lightweight markup language syntax and lexer/parser/tranlator inspired by John
 |                  | `h4 <Paragraph> newLine`                 |
 |                  | `h5 <Paragraph> newLine`                 |
 |                  | `h6 <Paragraph> newLine`                 |
-| `<Link> ->`      | `linkOpen <Paragraph> split <Text> linkClose ` |
+| `<Link> ->`      | `linkOpen <Text> split <Text> linkClose ` |
 | `<Image> ->`     | `imageOpen <Text> split <Text> imageClose` |
 | `<Text> ->`      | `text <Text>`                            |
