@@ -1,23 +1,19 @@
-test
-\*test
-#1 test
+text
+\*escaped text
+#1 header 1
 ***
-*test*
-* test
-* test
-***
-_test_
-*_test_*
--test-
-*_-test-_*
-- test
-- test
-`test`
+*bold*
+* unordered list item
+* unordered list item
+_ital_
+-strike-
+- ordered list item
+- ordered list item
+`code`
 ```
-test
+code block
 ```
->> test
->> test
-[ this is our github repo{} : github.com/MRBeussink/JotDown ]
+>> block quote
+>> block quote
+[ this is our github repo : github.com/MRBeussink/JotDown ]
 { this is a image : image }
-[ this has *emphasis* like -know- _no_body's business : link ]
